@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import "./App.css";
 import Script from "./script.js";
 
 class App extends Component {
