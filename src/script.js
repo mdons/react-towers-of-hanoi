@@ -12,32 +12,28 @@ class TowersOfHanoi extends Component {
     };
   }
 
-  // movePiece = (startStack, endStack) => {
-  //   const temp = this.state[startStack].pop()
-  //   this.state[endStack].push(temp);
-  //   if (!this.state.gameWon) {
-  //     this.setState({
-  //       a: this.state.a,
-  //       b: this.state.b,
-  //       c: this.state.c,
-  //       gameWon: this.state.gameWon
-  //     });
-  //   }
-  // };
+  movePiece = (startStack, endStack) => {
+    if (!this.state.gameWon) {
+      const temp = this.state[startStack].pop();
+      this.state[endStack].push(temp);
+      this.setState({
+        ...this.state
+      });
+    }
+  };
 
-  // isLegal = (startStack, endStack) => {
-  //   const startStackLength = this.state[startStack].length;
-  //   const endStackLength = this.state[endStack].length;
-  //   if (
-  //     startStackLength === 0 ||
-  //     startStack === endStack ||
-  //     this.state[startStack][startStackLength - 1] >
-  //       this.state[endStack][endStackLength - 1]
-  //   ) {
-  //     return false;
-  //   }
-  //   return true;
-  // };
+  isLegal = (startStack, endStack, disc) => {
+    const startStackLength = this.state[startStack].length;
+    const endStackLength = this.state[endStack].length;
+    const num = parseInt(disc);
+    if (
+      num !== this.state[startStack][startStackLength - 1] ||
+      num > this.state[endStack][endStackLength - 1]
+    ) {
+      return false;
+    }
+    return true;
+  };
 
   checkForWin = () => {
     const winningStack = "4,3,2,1";
@@ -52,26 +48,67 @@ class TowersOfHanoi extends Component {
     }
   };
 
-  onDrop = (e, stack) => {
-    console.log(stack);
+  onDragOver = event => {
+    event.preventDefault();
+  };
+
+  onDragStart = (event, disc, startStack) => {
+    event.dataTransfer.setData("disc", disc);
+    event.dataTransfer.setData("startStack", startStack);
+  };
+
+  onDrop = (event, endStack) => {
+    const disc = event.dataTransfer.getData("disc");
+    const startStack = event.dataTransfer.getData("startStack");
+    if (this.isLegal(startStack, endStack, disc)) {
+      this.movePiece(startStack, endStack);
+      this.checkForWin();
+    }
   };
 
   render() {
     return (
       <div>
-        <div data-stack="a" onDrop={e => this.onDrop(e, "a")}>
+        <div
+          data-stack="a"
+          onDragOver={this.onDragOver}
+          onDrop={e => this.onDrop(e, "a")}
+        >
           {this.state.a.map(num => (
-            <div data-block={num * 25} draggable />
+            <div
+              key={num}
+              data-block={num * 25}
+              draggable
+              onDragStart={e => this.onDragStart(e, num, "a")}
+            />
           ))}
         </div>
-        <div data-stack="b" onDrop={e => this.onDrop(e, "b")}>
+        <div
+          data-stack="b"
+          onDragOver={this.onDragOver}
+          onDrop={e => this.onDrop(e, "b")}
+        >
           {this.state.b.map(num => (
-            <div data-block={num * 25} draggable />
+            <div
+              key={num}
+              data-block={num * 25}
+              draggable
+              onDragStart={e => this.onDragStart(e, num, "b")}
+            />
           ))}
         </div>
-        <div data-stack="c" onDrop={e => this.onDrop(e, "c")}>
+        <div
+          data-stack="c"
+          onDragOver={this.onDragOver}
+          onDrop={e => this.onDrop(e, "c")}
+        >
           {this.state.c.map(num => (
-            <div data-block={num * 25} draggable />
+            <div
+              key={num}
+              data-block={num * 25}
+              draggable
+              onDragStart={e => this.onDragStart(e, num, "c")}
+            />
           ))}
         </div>
         {this.state.gameWon && (
