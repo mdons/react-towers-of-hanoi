@@ -8,17 +8,18 @@ class TowersOfHanoi extends Component {
       a: [4, 3, 2, 1],
       b: [],
       c: [],
-      gameWon: false
+      gameWon: false,
+      turnsTaken: 0
     };
   }
 
   movePiece = (startStack, endStack) => {
-    if (!this.state.gameWon) {
-      const temp = this.state[startStack].pop();
-      this.state[endStack].push(temp);
-      this.setState({
-        ...this.state
-      });
+    let gameState = this.state;
+    if (!gameState.gameWon) {
+      const temp = gameState[startStack].pop();
+      gameState[endStack].push(temp);
+      gameState.turnsTaken++;
+      this.setState(gameState);
     }
   };
 
@@ -42,7 +43,6 @@ class TowersOfHanoi extends Component {
       this.state.c.toString() === winningStack
     ) {
       this.setState({
-        ...this.state,
         gameWon: true
       });
     }
@@ -110,6 +110,9 @@ class TowersOfHanoi extends Component {
               onDragStart={e => this.onDragStart(e, num, "c")}
             />
           ))}
+        </div>
+        <div>
+          <p>Turns taken: {this.state.turnsTaken}</p>
         </div>
         {this.state.gameWon && (
           <div id="announce-game-won">
